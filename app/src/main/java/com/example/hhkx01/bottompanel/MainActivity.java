@@ -2,11 +2,14 @@ package com.example.hhkx01.bottompanel;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.lxj.dragpanel.DragPanel;
 
 public class MainActivity extends AppCompatActivity {
+    private static final String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +31,22 @@ public class MainActivity extends AppCompatActivity {
                 bottomPanel.close();
             }
 
+        });
+        bottomPanel.setOnPanelDragListener(new DragPanel.OnPanelDragListener() {
+            @Override
+            public void onOpen() {
+                Toast.makeText(MainActivity.this, "open", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onClose() {
+                Toast.makeText(MainActivity.this, "close", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onDragging(float fraction) {
+                Log.d(TAG, "onDragging: fraction: "+fraction);
+            }
         });
     }
 }

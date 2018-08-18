@@ -74,7 +74,7 @@ public class DragPanel extends FrameLayout {
         dragView.layout(0, defaultTop, dragView.getMeasuredWidth(), defaultTop + dragView.getMeasuredHeight());
         fixedView.layout(0, getMeasuredHeight() - fixedView.getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight());
 
-        changeShadow();
+        changeShadow(dragView.getTop() * 1f / maxTop);
     }
 
     @Override
@@ -114,7 +114,22 @@ public class DragPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            changeShadow();
+            float fraction = dragView.getTop() * 1f / maxTop;
+            if (fraction < 0f) {
+                fraction = 0f;
+            }
+
+            changeShadow(fraction);
+
+            // notify listener
+            if (dragListener != null) {
+                dragListener.onDragging(fraction);
+                if (dragView.getTop() == defaultTop) {
+                    dragListener.onOpen();
+                } else if (dragView.getTop() == maxTop) {
+                    dragListener.onClose();
+                }
+            }
 
             if (changedView == dragView) {
                 if (dy > 0 && top < defaultTop) {
@@ -141,13 +156,8 @@ public class DragPanel extends FrameLayout {
         }
     };
 
-    private void changeShadow() {
-        if(!hasShadow)return;
-
-        float fraction = dragView.getTop() * 1f / maxTop;
-        if (fraction < 0f) {
-            fraction = 0f;
-        }
+    private void changeShadow(float fraction) {
+        if (!hasShadow) return;
         setBackgroundColor((Integer) argbEvaluator.evaluate(fraction, endColor, Color.TRANSPARENT));
     }
 
@@ -194,15 +204,29 @@ public class DragPanel extends FrameLayout {
 
     /**
      * set DragPanel has shadow bg.
+     *
      * @param hasShadow
      */
-    public void setHasShadow(boolean hasShadow){
+    public void setHasShadow(boolean hasShadow) {
         this.hasShadow = hasShadow;
     }
 
-    public void setDefaultShowHeight(int h){
+    public void setDefaultShowHeight(int h) {
         this.defaultShowHeight = h;
     }
 
 
+    public interface OnPanelDragListener {
+        void onOpen();
+
+        void onClose();
+
+        void onDragging(float fraction);
+    }
+
+    private OnPanelDragListener dragListener;
+
+    public void setOnPanelDragListener(OnPanelDragListener listener) {
+        this.dragListener = listener;
+    }
 }
