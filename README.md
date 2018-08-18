@@ -5,8 +5,11 @@ A nice vertical drag layout, a bit like BottomSheet!
 ![DragPanel](/screenshot/dragpanel.gif)
 
 # Gradle
+
+[![Download](https://api.bintray.com/packages/li-xiaojun/jrepo/dragpanel/images/download.svg)]()
+
 ```groovy
-implementation 'com.lxj:dragpanel:0.0.1'
+implementation 'com.lxj:dragpanel:latest release'
 ```
 
 # Description
