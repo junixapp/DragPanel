@@ -1,17 +1,21 @@
 package com.lxj.dragpanel;
 
 import android.animation.ArgbEvaluator;
+import android.animation.FloatEvaluator;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 /**
  * Created by lixiaojun on 2018/8/17.
@@ -26,6 +30,7 @@ public class DragPanel extends FrameLayout {
     private boolean hasShadow = true;
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private int endColor = Color.parseColor("#ee000000");
+    private FloatEvaluator floatEvaluator = new FloatEvaluator();
 
     public DragPanel(@NonNull Context context) {
         super(context);
@@ -47,6 +52,8 @@ public class DragPanel extends FrameLayout {
         defaultShowHeight = dip2px(240);
     }
 
+    ImageView imageView;
+
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
@@ -56,6 +63,8 @@ public class DragPanel extends FrameLayout {
 
         dragView = getChildAt(0);
         fixedView = getChildAt(1);
+        imageView = findViewWithTag("ImageHeader");
+        imageView.setAlpha(0f);
     }
 
     @Override
@@ -71,14 +80,18 @@ public class DragPanel extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         super.onLayout(changed, left, top, right, bottom);
-        dragView.layout(0, defaultTop, dragView.getMeasuredWidth(), defaultTop + dragView.getMeasuredHeight());
-        fixedView.layout(0, getMeasuredHeight() - fixedView.getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight());
-
-        changeShadow(dragView.getTop() * 1f / maxTop);
+        dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
+        fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
     }
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
+        boolean isTouchImage = isTouchInImageView((int) ev.getX(), (int) ev.getY());
+
+        if (isTouchImage) {
+            return imageView.getAlpha() > 0f;
+        }
+
         return dragHelper.shouldInterceptTouchEvent(ev);
     }
 
@@ -87,6 +100,11 @@ public class DragPanel extends FrameLayout {
         boolean isCapture = dragHelper.isViewUnder(dragView, (int) ev.getX(), (int) ev.getY());
         dragHelper.processTouchEvent(ev);
         return isCapture;
+    }
+
+    private boolean isTouchInImageView(int x, int y) {
+        return x >= dragView.getLeft() && x < dragView.getRight() && y >= dragView.getTop()
+                && y < (dragView.getTop() + imageView.getMeasuredHeight());
     }
 
     ViewDragHelper.Callback cb = new ViewDragHelper.Callback() {
@@ -120,6 +138,8 @@ public class DragPanel extends FrameLayout {
             }
 
             changeShadow(fraction);
+
+            changeImageAlpha();
 
             // notify listener
             if (dragListener != null) {
@@ -159,6 +179,20 @@ public class DragPanel extends FrameLayout {
     private void changeShadow(float fraction) {
         if (!hasShadow) return;
         setBackgroundColor((Integer) argbEvaluator.evaluate(fraction, endColor, Color.TRANSPARENT));
+    }
+
+    private void changeImageAlpha(){
+        //calculate drag fraction from defaultTop to minTop;
+        float fraction = dragView.getTop()*1f / defaultTop;
+        if(fraction < 0f){
+            fraction = 0f;
+        }
+        if(fraction > 1f){
+            fraction = 1f;
+        }
+
+        Float val = floatEvaluator.evaluate(1f-fraction, 0f, 1f);
+        imageView.setAlpha(val);
     }
 
     private void moveFixedView(int dy) {
