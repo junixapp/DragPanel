@@ -32,6 +32,15 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+
+        final View view = findViewById(R.id.iv);
+        view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(MainActivity.this, "Click", Toast.LENGTH_LONG).show();
+            }
+        });
+
         bottomPanel.setOnPanelDragListener(new DragPanel.OnPanelDragListener() {
             @Override
             public void onOpen() {
@@ -45,8 +54,17 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDragging(float fraction) {
-                Log.d(TAG, "onDragging: fraction: "+fraction);
+//                Log.d(TAG, "onDragging: fraction: "+fraction);
             }
         });
+
+//        view.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                view.setVisibility(View.GONE);
+//            }
+//        }, 2000);
+
+
     }
 }
