@@ -49,10 +49,10 @@ public class DragPanel extends FrameLayout {
 
     private void init() {
         dragHelper = ViewDragHelper.create(this, cb);
-        defaultShowHeight = dip2px(240);
+        defaultShowHeight = dip2px(340);
     }
 
-    ImageView imageView;
+    View headerView;
 
     @Override
     protected void onFinishInflate() {
@@ -63,8 +63,8 @@ public class DragPanel extends FrameLayout {
 
         dragView = getChildAt(0);
         fixedView = getChildAt(1);
-        imageView = findViewWithTag("ImageHeader");
-        imageView.setAlpha(0f);
+        headerView = findViewWithTag("HeaderView");
+        headerView.setAlpha(0f);
     }
 
     @Override
@@ -89,7 +89,7 @@ public class DragPanel extends FrameLayout {
         boolean isTouchImage = isTouchInImageView((int) ev.getX(), (int) ev.getY());
 
         if (isTouchImage) {
-            return imageView.getAlpha() > 0f;
+            return headerView.getAlpha() > 0f;
         }
 
         return dragHelper.shouldInterceptTouchEvent(ev);
@@ -104,7 +104,7 @@ public class DragPanel extends FrameLayout {
 
     private boolean isTouchInImageView(int x, int y) {
         return x >= dragView.getLeft() && x < dragView.getRight() && y >= dragView.getTop()
-                && y < (dragView.getTop() + imageView.getMeasuredHeight());
+                && y < (dragView.getTop() + headerView.getMeasuredHeight());
     }
 
     ViewDragHelper.Callback cb = new ViewDragHelper.Callback() {
@@ -162,8 +162,10 @@ public class DragPanel extends FrameLayout {
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
-            int middle = getMeasuredHeight() / 2;
-            if (releasedChild.getTop() >= middle && releasedChild.getTop() < defaultTop) {
+            int middle = defaultTop/2;
+            if(releasedChild.getTop() >=0 && releasedChild.getTop() < middle){
+                dragHelper.smoothSlideViewTo(releasedChild, 0, 0);
+            } else if (releasedChild.getTop() >= middle && releasedChild.getTop() < defaultTop) {
                 dragHelper.smoothSlideViewTo(releasedChild, 0, defaultTop);
             } else if (releasedChild.getTop() >= defaultTop) {
                 dragHelper.smoothSlideViewTo(releasedChild, 0, maxTop);
@@ -192,7 +194,7 @@ public class DragPanel extends FrameLayout {
         }
 
         Float val = floatEvaluator.evaluate(1f-fraction, 0f, 1f);
-        imageView.setAlpha(val);
+        headerView.setAlpha(val);
     }
 
     private void moveFixedView(int dy) {
@@ -238,8 +240,6 @@ public class DragPanel extends FrameLayout {
 
     /**
      * set DragPanel has shadow bg.
-     *
-     * @param hasShadow
      */
     public void setHasShadow(boolean hasShadow) {
         this.hasShadow = hasShadow;
@@ -247,6 +247,7 @@ public class DragPanel extends FrameLayout {
 
     public void setDefaultShowHeight(int h) {
         this.defaultShowHeight = h;
+        defaultTop = getMeasuredHeight() - defaultShowHeight - fixedView.getMeasuredHeight();
     }
 
 

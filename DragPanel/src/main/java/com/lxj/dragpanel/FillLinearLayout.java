@@ -25,13 +25,18 @@ public class FillLinearLayout extends LinearLayout {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int total = 0;
-        for (int i = 0; i < getChildCount(); i++) {
-            View v = getChildAt(i);
-            measureChild(v, widthMeasureSpec, heightMeasureSpec);
-            total += v.getMeasuredHeight();
+        if(getOrientation()==HORIZONTAL){
+            super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        }else {
+            int total = 0;
+            for (int i = 0; i < getChildCount(); i++) {
+                View v = getChildAt(i);
+                measureChild(v, widthMeasureSpec, heightMeasureSpec);
+                total += v.getMeasuredHeight();
+            }
+            int width = MeasureSpec.getSize(widthMeasureSpec);
+            setMeasuredDimension(width, total);
         }
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        setMeasuredDimension(width, total);
+
     }
 }
