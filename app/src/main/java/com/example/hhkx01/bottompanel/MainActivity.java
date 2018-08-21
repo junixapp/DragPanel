@@ -20,6 +20,8 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+//                bottomPanel.setDefaultShowHeight(1400);
                 bottomPanel.open();
             }
 
@@ -32,12 +34,19 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
+        findViewById(R.id.circle).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            }
+
+        });
 
         final View view = findViewById(R.id.iv);
         view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Toast.makeText(MainActivity.this, "Click", Toast.LENGTH_LONG).show();
+
             }
         });
 
