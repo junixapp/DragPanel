@@ -99,7 +99,7 @@
                 <TextView
                     android:id="@+id/tv1"
                     android:layout_width="match_parent"
-                    android:layout_height="390dp"
+                    android:layout_height="90dp"
                     android:background="#fff"
                     android:gravity="center"
                     android:text="textView"

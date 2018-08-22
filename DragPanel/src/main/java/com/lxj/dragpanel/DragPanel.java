@@ -189,7 +189,9 @@ public class DragPanel extends FrameLayout {
         @Override
         public void onViewPositionChanged(View changedView, int left, int top, int dx, int dy) {
             super.onViewPositionChanged(changedView, left, top, dx, dy);
-            float fraction = dragView.getTop() * 1f / maxTop;
+            // minTop maybe gt 0.
+            float startPoint = Math.max(0, minTop);
+            float fraction = (dragView.getTop()-startPoint) * 1f / (maxTop - startPoint);
             if (fraction < 0f) {
                 fraction = 0f;
             }

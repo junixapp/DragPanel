@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onDragging(float fraction) {
-//                Log.d(TAG, "onDragging: fraction: "+fraction);
+                Log.d(TAG, "onDragging: fraction: "+fraction);
             }
         });
 
