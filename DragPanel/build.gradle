@@ -27,8 +27,10 @@ publish {
     userOrg = 'li-xiaojun'
     groupId = 'com.lxj'
     artifactId = 'dragpanel'
-    publishVersion = '0.0.8'
+    publishVersion = '0.0.10'
     repoName = 'jrepo'
     desc = 'A nice vertical drag layout, a bit like BottomSheet!'
     website = 'https://github.com/li-xiaojun/DragPanel'
 }
+
+// ./gradlew clean build bintrayUpload -PbintrayUser=li-xiaojun -PbintrayKey=99f6d08934145ab27e99a75af031b0b3c94d99a4 -PdryRun=false

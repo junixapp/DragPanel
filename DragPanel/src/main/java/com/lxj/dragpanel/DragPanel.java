@@ -4,19 +4,17 @@ import android.animation.ArgbEvaluator;
 import android.animation.FloatEvaluator;
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.support.annotation.AttrRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
 
 /**
  * Created by lixiaojun on 2018/8/17.
@@ -32,6 +30,8 @@ public class DragPanel extends FrameLayout {
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private int endColor = Color.parseColor("#ee000000");
     private FloatEvaluator floatEvaluator = new FloatEvaluator();
+    private int touchSlop;
+    private int durationSlop = 250;
 
     public DragPanel(@NonNull Context context) {
         super(context);
@@ -51,6 +51,7 @@ public class DragPanel extends FrameLayout {
     private void init() {
         dragHelper = ViewDragHelper.create(this, cb);
         defaultShowHeight = dip2px(340);
+        touchSlop = ViewConfiguration.get(getContext()).getScaledTouchSlop();
     }
 
     View headerView;
@@ -65,7 +66,12 @@ public class DragPanel extends FrameLayout {
         dragView = getChildAt(0);
         fixedView = getChildAt(1);
         headerView = findViewWithTag("HeaderView");
+        if(headerView==null){
+            throw new IllegalArgumentException("must have a child that have a tag named HeaderView!");
+        }
+
         headerView.setAlpha(0f);
+
 
         getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
@@ -96,8 +102,7 @@ public class DragPanel extends FrameLayout {
 
     @Override
     public boolean onInterceptTouchEvent(MotionEvent ev) {
-        boolean isTouchImage = isTouchInImageView((int) ev.getX(), (int) ev.getY());
-
+        boolean isTouchImage = isTouchInHeaderView((int) ev.getX(), (int) ev.getY());
         if (isTouchImage) {
             return headerView.getAlpha() > 0f;
         }
@@ -105,14 +110,45 @@ public class DragPanel extends FrameLayout {
         return dragHelper.shouldInterceptTouchEvent(ev);
     }
 
+    private float downX, downY;
+    private long downTime;
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         boolean isCapture = dragHelper.isViewUnder(dragView, (int) ev.getX(), (int) ev.getY());
         dragHelper.processTouchEvent(ev);
+
+        boolean isTouchImage = isTouchInHeaderView((int) ev.getX(), (int) ev.getY());
+        if (isTouchImage) {
+            boolean isCanTap = headerView.getAlpha() > 0f;
+            switch (ev.getAction()){
+                case MotionEvent.ACTION_DOWN:
+                    downX = ev.getX();
+                    downY = ev.getY();
+                    downTime = System.currentTimeMillis();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    float dx = ev.getX() - downX;
+                    float dy = ev.getY() - downY;
+                    float duration = System.currentTimeMillis() - downTime;
+                    float distance = (float) Math.sqrt(Math.pow(dx, 2)+ Math.pow(dy, 2));
+                    if(distance <= touchSlop && duration < durationSlop){
+                        // click event
+                        if(headerClickListener!=null){
+                            headerClickListener.onHeaderClick();
+                        }
+                    }
+                    break;
+            }
+            return isCanTap;
+        }
+
         return isCapture;
     }
 
-    private boolean isTouchInImageView(int x, int y) {
+    private boolean isTouchInHeaderView(int x, int y) {
+        if(headerView.getVisibility()==GONE){
+            return false;
+        }
         return x >= dragView.getLeft() && x < dragView.getRight() && y >= dragView.getTop()
                 && y < (dragView.getTop() + headerView.getMeasuredHeight());
     }
@@ -162,7 +198,7 @@ public class DragPanel extends FrameLayout {
             }
 
             if (changedView == dragView) {
-                if (dy > 0 && top < defaultTop) {
+                if (dy > 0 && top <= defaultTop) {
                     return;
                 }
                 moveFixedView(dy);
@@ -173,18 +209,16 @@ public class DragPanel extends FrameLayout {
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
             int middle = defaultTop/2;
-            if(releasedChild.getTop() >=0 && releasedChild.getTop() < middle){
+            if(releasedChild.getTop() >0 && releasedChild.getTop() < middle){
                 dragHelper.smoothSlideViewTo(releasedChild, 0, 0);
-            } else if (releasedChild.getTop() >= middle && releasedChild.getTop() < defaultTop) {
+            } else if (releasedChild.getTop() > middle && releasedChild.getTop() < defaultTop) {
                 dragHelper.smoothSlideViewTo(releasedChild, 0, defaultTop);
-            } else if (releasedChild.getTop() >= defaultTop) {
+            } else if (releasedChild.getTop() > defaultTop) {
                 dragHelper.smoothSlideViewTo(releasedChild, 0, maxTop);
             } else {
-                dragHelper.flingCapturedView(0, minTop, 0, defaultTop - 1);
+                dragHelper.flingCapturedView(0, minTop, 0, defaultTop);
             }
             ViewCompat.postInvalidateOnAnimation(DragPanel.this);
-
-
         }
     };
 
@@ -273,5 +307,13 @@ public class DragPanel extends FrameLayout {
 
     public void setOnPanelDragListener(OnPanelDragListener listener) {
         this.dragListener = listener;
+    }
+
+    public interface OnHeaderClickListener{
+        void onHeaderClick();
+    }
+    private OnHeaderClickListener headerClickListener;
+    public void setOnTapListener(OnHeaderClickListener headerClickListener){
+        this.headerClickListener = headerClickListener;
     }
 }
