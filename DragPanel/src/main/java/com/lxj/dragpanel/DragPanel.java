@@ -316,4 +316,11 @@ public class DragPanel extends FrameLayout {
     public void setOnTapListener(OnHeaderClickListener headerClickListener){
         this.headerClickListener = headerClickListener;
     }
+
+    public boolean isOpen(){
+        return dragView.getTop() >= defaultTop;
+    }
+    public boolean isClose(){
+        return dragView.getTop() == maxTop;
+    }
 }
