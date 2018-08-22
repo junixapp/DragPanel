@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void run() {
 //                tv1.setVisibility(View.GONE);
+                findViewById(R.id.tv2).setVisibility(View.GONE);
             }
         }, 2000);
 
