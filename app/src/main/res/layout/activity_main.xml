@@ -93,6 +93,7 @@
                     android:text="描述信息" />
 
                 <TextView
+                    android:id="@+id/tv1"
                     android:layout_width="match_parent"
                     android:layout_height="340dp"
                     android:background="#fff"
@@ -101,6 +102,7 @@
                     android:textSize="20sp" />
 
                 <TextView
+                    android:id="@+id/tv2"
                     android:layout_width="match_parent"
                     android:layout_height="320dp"
                     android:background="#fff"

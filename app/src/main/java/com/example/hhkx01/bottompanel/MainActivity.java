@@ -67,12 +67,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-//        view.postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                view.setVisibility(View.GONE);
-//            }
-//        }, 2000);
+        final View tv1 = findViewById(R.id.tv1);
+
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                tv1.setVisibility(View.GONE);
+            }
+        }, 2000);
 
 
     }
