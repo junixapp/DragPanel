@@ -10,6 +10,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.view.ViewCompat;
 import android.support.v4.widget.ViewDragHelper;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewConfiguration;
@@ -21,6 +22,7 @@ import android.widget.FrameLayout;
  */
 
 public class DragPanel extends FrameLayout {
+    private static final String TAG = "DragPanel";
     private View dragView;
     private View fixedView;
     private int maxTop, minTop, defaultTop, fixedViewMaxTop;
@@ -93,11 +95,17 @@ public class DragPanel extends FrameLayout {
         maxTop = getMeasuredHeight();
         fixedViewMaxTop = maxTop + getMeasuredHeight() - defaultTop - fixedView.getMeasuredHeight();
     }
-
+    private boolean isFirstLayout = true;
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
-        fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
+        if(!isFirstLayout){
+            dragView.layout(0, dragView.getTop(), dragView.getRight(), dragView.getTop() + dragView.getMeasuredHeight());
+            fixedView.layout(0, fixedView.getTop(), fixedView.getRight(), fixedView.getTop() + fixedView.getMeasuredHeight());
+        }else {
+            dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
+            fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
+            isFirstLayout = false;
+        }
     }
 
     @Override
