@@ -101,13 +101,14 @@ public class DragPanel extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         if (!isFirstLayout) {
-            dragView.layout(0, dragView.getTop(), dragView.getRight(), dragView.getTop() + dragView.getMeasuredHeight());
+            dragView.layout(0, dragView.getBottom() -  dragView.getMeasuredHeight(), dragView.getRight(), dragView.getBottom() );
             fixedView.layout(0, fixedView.getTop(), fixedView.getRight(), fixedView.getTop() + fixedView.getMeasuredHeight());
         } else {
             dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
             fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
             isFirstLayout = false;
         }
+        changeImageAlpha();
     }
 
     @Override
