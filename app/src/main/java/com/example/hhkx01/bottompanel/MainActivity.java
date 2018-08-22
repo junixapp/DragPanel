@@ -4,9 +4,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lxj.dragpanel.DragPanel;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -94,6 +97,15 @@ public class MainActivity extends AppCompatActivity {
 //                tv1.setVisibility(View.GONE);
             }
         }, 2000);
+
+
+        final TextView text = findViewById(R.id.text);
+        text.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                text.setMaxLines(Integer.MAX_VALUE);
+            }
+        });
 
 
     }

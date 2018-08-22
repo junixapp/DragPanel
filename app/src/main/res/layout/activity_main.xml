@@ -87,11 +87,14 @@
                     android:text="小海湾" />
 
                 <TextView
+                    android:id="@+id/text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="#fff"
                     android:padding="15dp"
-                    android:text="描述信息" />
+                    android:maxLines="3"
+                    android:textSize="22sp"
+                    android:text="描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息描述信息" />
 
                 <TextView
                     android:id="@+id/tv1"
