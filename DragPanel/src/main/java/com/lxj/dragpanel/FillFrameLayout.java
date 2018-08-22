@@ -30,6 +30,7 @@ public class FillFrameLayout extends FrameLayout {
         int maxheight = 0;
         for (int i = 0; i < getChildCount(); i++) {
             View v = getChildAt(i);
+            if(v.getVisibility()==GONE)continue;
             measureChild(v, widthMeasureSpec, heightMeasureSpec);
             maxheight = Math.max(maxheight, v.getMeasuredHeight());
         }

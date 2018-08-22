@@ -31,6 +31,7 @@ public class FillLinearLayout extends LinearLayout {
             int total = 0;
             for (int i = 0; i < getChildCount(); i++) {
                 View v = getChildAt(i);
+                if(v.getVisibility()==GONE)continue;
                 measureChild(v, widthMeasureSpec, heightMeasureSpec);
                 total += v.getMeasuredHeight();
             }
