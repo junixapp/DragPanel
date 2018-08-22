@@ -27,7 +27,7 @@ publish {
     userOrg = 'li-xiaojun'
     groupId = 'com.lxj'
     artifactId = 'dragpanel'
-    publishVersion = '0.1.1'
+    publishVersion = '0.1.2'
     repoName = 'jrepo'
     desc = 'A nice vertical drag layout, a bit like BottomSheet!'
     website = 'https://github.com/li-xiaojun/DragPanel'

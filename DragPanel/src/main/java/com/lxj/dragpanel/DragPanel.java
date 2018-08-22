@@ -68,7 +68,7 @@ public class DragPanel extends FrameLayout {
         dragView = getChildAt(0);
         fixedView = getChildAt(1);
         headerView = findViewWithTag("HeaderView");
-        if(headerView==null){
+        if (headerView == null) {
             throw new IllegalArgumentException("must have a child that have a tag named HeaderView!");
         }
 
@@ -89,19 +89,21 @@ public class DragPanel extends FrameLayout {
         calculateValues();
     }
 
-    private void calculateValues(){
+    private void calculateValues() {
         defaultTop = getMeasuredHeight() - defaultShowHeight - fixedView.getMeasuredHeight();
         minTop = getMeasuredHeight() - dragView.getMeasuredHeight() - fixedView.getMeasuredHeight();
         maxTop = getMeasuredHeight();
         fixedViewMaxTop = maxTop + getMeasuredHeight() - defaultTop - fixedView.getMeasuredHeight();
     }
+
     private boolean isFirstLayout = true;
+
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-        if(!isFirstLayout){
+        if (!isFirstLayout) {
             dragView.layout(0, dragView.getTop(), dragView.getRight(), dragView.getTop() + dragView.getMeasuredHeight());
             fixedView.layout(0, fixedView.getTop(), fixedView.getRight(), fixedView.getTop() + fixedView.getMeasuredHeight());
-        }else {
+        } else {
             dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
             fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
             isFirstLayout = false;
@@ -120,6 +122,7 @@ public class DragPanel extends FrameLayout {
 
     private float downX, downY;
     private long downTime;
+
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
         boolean isCapture = dragHelper.isViewUnder(dragView, (int) ev.getX(), (int) ev.getY());
@@ -128,7 +131,7 @@ public class DragPanel extends FrameLayout {
         boolean isTouchImage = isTouchInHeaderView((int) ev.getX(), (int) ev.getY());
         if (isTouchImage) {
             boolean isCanTap = headerView.getAlpha() > 0f;
-            switch (ev.getAction()){
+            switch (ev.getAction()) {
                 case MotionEvent.ACTION_DOWN:
                     downX = ev.getX();
                     downY = ev.getY();
@@ -138,10 +141,10 @@ public class DragPanel extends FrameLayout {
                     float dx = ev.getX() - downX;
                     float dy = ev.getY() - downY;
                     float duration = System.currentTimeMillis() - downTime;
-                    float distance = (float) Math.sqrt(Math.pow(dx, 2)+ Math.pow(dy, 2));
-                    if(distance <= touchSlop && duration < durationSlop){
+                    float distance = (float) Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                    if (distance <= touchSlop && duration < durationSlop) {
                         // click event
-                        if(headerClickListener!=null){
+                        if (headerClickListener != null) {
                             headerClickListener.onHeaderClick();
                         }
                     }
@@ -154,7 +157,7 @@ public class DragPanel extends FrameLayout {
     }
 
     private boolean isTouchInHeaderView(int x, int y) {
-        if(headerView.getVisibility()==GONE){
+        if (headerView.getVisibility() == GONE) {
             return false;
         }
         return x >= dragView.getLeft() && x < dragView.getRight() && y >= dragView.getTop()
@@ -216,9 +219,10 @@ public class DragPanel extends FrameLayout {
         @Override
         public void onViewReleased(View releasedChild, float xvel, float yvel) {
             super.onViewReleased(releasedChild, xvel, yvel);
-            int middle = defaultTop/2;
-            if(releasedChild.getTop() >0 && releasedChild.getTop() < middle){
-                dragHelper.smoothSlideViewTo(releasedChild, 0, 0);
+            int start = Math.max(0, minTop);
+            int middle = (start + defaultTop) / 2;
+            if (releasedChild.getTop() > start && releasedChild.getTop() < middle) {
+                dragHelper.smoothSlideViewTo(releasedChild, 0, start);
             } else if (releasedChild.getTop() > middle && releasedChild.getTop() < defaultTop) {
                 dragHelper.smoothSlideViewTo(releasedChild, 0, defaultTop);
             } else if (releasedChild.getTop() > defaultTop) {
@@ -235,17 +239,17 @@ public class DragPanel extends FrameLayout {
         setBackgroundColor((Integer) argbEvaluator.evaluate(fraction, endColor, Color.TRANSPARENT));
     }
 
-    private void changeImageAlpha(){
+    private void changeImageAlpha() {
         //calculate drag fraction from defaultTop to minTop;
-        float fraction = dragView.getTop()*1f / defaultTop;
-        if(fraction < 0f){
+        float fraction = dragView.getTop() * 1f / defaultTop;
+        if (fraction < 0f) {
             fraction = 0f;
         }
-        if(fraction > 1f){
+        if (fraction > 1f) {
             fraction = 1f;
         }
 
-        Float val = floatEvaluator.evaluate(1f-fraction, 0f, 1f);
+        Float val = floatEvaluator.evaluate(1f - fraction, 0f, 1f);
         headerView.setAlpha(val);
     }
 
@@ -317,18 +321,21 @@ public class DragPanel extends FrameLayout {
         this.dragListener = listener;
     }
 
-    public interface OnHeaderClickListener{
+    public interface OnHeaderClickListener {
         void onHeaderClick();
     }
+
     private OnHeaderClickListener headerClickListener;
-    public void setOnTapListener(OnHeaderClickListener headerClickListener){
+
+    public void setOnTapListener(OnHeaderClickListener headerClickListener) {
         this.headerClickListener = headerClickListener;
     }
 
-    public boolean isOpen(){
+    public boolean isOpen() {
         return dragView.getTop() >= defaultTop;
     }
-    public boolean isClose(){
+
+    public boolean isClose() {
         return dragView.getTop() == maxTop;
     }
 }
