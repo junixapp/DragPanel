@@ -101,8 +101,10 @@ public class DragPanel extends FrameLayout {
     @Override
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         if (!isFirstLayout) {
-            dragView.layout(0, dragView.getBottom() -  dragView.getMeasuredHeight(), dragView.getRight(), dragView.getBottom() );
-            fixedView.layout(0, fixedView.getTop(), fixedView.getRight(), fixedView.getTop() + fixedView.getMeasuredHeight());
+            // if new height is lt old height, the bottom maybe lt fixedView.getTop()
+            int newBottom = dragView.getTop() + dragView.getMeasuredHeight();
+            int offset = Math.max(fixedView.getTop() - newBottom, 0);
+            dragView.layout(0, dragView.getTop() + offset, dragView.getRight(), newBottom + offset);
         } else {
             dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
             fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
@@ -335,7 +337,7 @@ public class DragPanel extends FrameLayout {
     }
 
     public boolean isOpen() {
-        return dragView.getTop() >= defaultTop;
+        return dragView.getTop() <= defaultTop;
     }
 
     public boolean isClose() {
