@@ -99,6 +99,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }, 2000);
 
+        view.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+//                tv1.setVisibility(View.GONE);
+//                findViewById(R.id.tv2).setVisibility(View.VISIBLE);
+            }
+        }, 6000);
+
 
         final TextView text = findViewById(R.id.text);
         text.setOnClickListener(new View.OnClickListener() {
