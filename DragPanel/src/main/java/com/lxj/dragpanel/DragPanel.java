@@ -29,6 +29,7 @@ public class DragPanel extends FrameLayout {
     private int defaultShowHeight;
     private ViewDragHelper dragHelper;
     private boolean hasShadow = true;
+    private boolean isChangeAlpha = true;
     private ArgbEvaluator argbEvaluator = new ArgbEvaluator();
     private int endColor = Color.parseColor("#ee000000");
     private FloatEvaluator floatEvaluator = new FloatEvaluator();
@@ -93,7 +94,7 @@ public class DragPanel extends FrameLayout {
         defaultTop = getMeasuredHeight() - defaultShowHeight - fixedView.getMeasuredHeight();
         minTop = getMeasuredHeight() - dragView.getMeasuredHeight() - fixedView.getMeasuredHeight();
         maxTop = getMeasuredHeight();
-        fixedViewMaxTop = maxTop + getMeasuredHeight() - defaultTop - fixedView.getMeasuredHeight();
+        fixedViewMaxTop = maxTop;
     }
 
     private boolean isFirstLayout = true;
@@ -105,6 +106,7 @@ public class DragPanel extends FrameLayout {
             int newBottom = dragView.getTop() + dragView.getMeasuredHeight();
             int offset = Math.max(fixedView.getTop() - newBottom, 0);
             dragView.layout(0, dragView.getTop() + offset, dragView.getRight(), newBottom + offset);
+            fixedView.layout(0, fixedView.getTop(), fixedView.getRight(), fixedView.getBottom());
         } else {
             dragView.layout(0, maxTop, dragView.getMeasuredWidth(), maxTop + dragView.getMeasuredHeight());
             fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
@@ -175,6 +177,7 @@ public class DragPanel extends FrameLayout {
 
         @Override
         public int getViewVerticalDragRange(View child) {
+            canScrollVertically(-1);
             return 1;
         }
 
@@ -245,6 +248,7 @@ public class DragPanel extends FrameLayout {
     }
 
     private void changeImageAlpha() {
+        if(!isChangeAlpha)return;
         //calculate drag fraction from defaultTop to minTop;
         float fraction = dragView.getTop() * 1f / defaultTop;
         if (fraction < 0f) {
@@ -342,5 +346,8 @@ public class DragPanel extends FrameLayout {
 
     public boolean isClose() {
         return dragView.getTop() == maxTop;
+    }
+    public void setIsChangeAlpha(boolean isChangeAlpha){
+        this.isChangeAlpha = isChangeAlpha;
     }
 }

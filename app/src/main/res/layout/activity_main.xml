@@ -102,8 +102,13 @@
                     android:layout_height="90dp"
                     android:background="#fff"
                     android:gravity="center"
-                    android:text="textView"
+                    android:text="Comments:"
                     android:textSize="20sp" />
+
+                <com.lxj.dragpanel.FillRecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
 
                 <TextView
                     android:id="@+id/tv2"

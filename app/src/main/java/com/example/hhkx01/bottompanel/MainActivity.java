@@ -1,25 +1,36 @@
 package com.example.hhkx01.bottompanel;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.lxj.dragpanel.DragPanel;
+import com.lxj.easyadapter.CommonAdapter;
+import com.lxj.easyadapter.ViewHolder;
 
 import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+
+import static android.view.View.GONE;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
+    RecyclerView recyclerView;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final DragPanel bottomPanel = (DragPanel) findViewById(R.id.bottomPanel);
         final View tv1 = findViewById(R.id.tv1);
+        recyclerView = findViewById(R.id.recyclerView);
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,23 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                tv1.setVisibility(View.GONE);
-                findViewById(R.id.tv2).setVisibility(View.GONE);
-            }
-        }, 2000);
-
-        view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                tv1.setVisibility(View.GONE);
-//                findViewById(R.id.tv2).setVisibility(View.VISIBLE);
-            }
-        }, 6000);
-
-
         final TextView text = findViewById(R.id.text);
         text.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,6 +116,21 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        // prepare data
+        final ArrayList<String> datas = new ArrayList<>();
+        for (int i = 0; i < 50; i++) {
+            datas.add("name " + i);
+        }
+        LinearLayoutManager layout = new LinearLayoutManager(this);
+        recyclerView.setLayoutManager(layout);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(new CommonAdapter<String>(R.layout.item, datas) {
+            @Override
+            protected void convert(ViewHolder holder, String s, int position) {
+                holder.setText(R.id.text, datas.get(position));
+            }
+
+        });
     }
 
     boolean isMax;
