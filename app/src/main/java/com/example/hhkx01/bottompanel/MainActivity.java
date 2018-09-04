@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -24,13 +25,18 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     RecyclerView recyclerView;
+    RecyclerView recyclerView2;
+    private DragPanel bottomPanel;
+    TextView tv2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final DragPanel bottomPanel = (DragPanel) findViewById(R.id.bottomPanel);
+        bottomPanel = (DragPanel) findViewById(R.id.bottomPanel);
         final View tv1 = findViewById(R.id.tv1);
         recyclerView = findViewById(R.id.recyclerView);
+        recyclerView2 = findViewById(R.id.recyclerView2);
+        tv2 = findViewById(R.id.tv2);
         findViewById(R.id.btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        });
 
-        bottomPanel.setOnTapListener(new DragPanel.OnHeaderClickListener() {
+        bottomPanel.setOnHeaderClickListener(new DragPanel.OnHeaderClickListener() {
             @Override
             public void onHeaderClick() {
                 Log.e(TAG, "onClick: Header");
@@ -81,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        bottomPanel.setOnPanelDragListener(new DragPanel.OnPanelDragListener() {
+        bottomPanel.addOnPanelDragListener(new DragPanel.OnPanelDragListener() {
             @Override
             public void onOpen() {
                 Log.e(TAG, "onClick: onOpen");
@@ -117,14 +123,38 @@ public class MainActivity extends AppCompatActivity {
 
 
         // prepare data
+        prepareData();
+
+
+        bottomPanel.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+
+                int windowHeight = getWindow().getDecorView().getMeasuredHeight();
+                Log.e(TAG, "windowHeight: " + windowHeight );
+                Log.e(TAG, "onGlobalLayout: bottomPanel " + bottomPanel.getMeasuredHeight() );
+                Log.e(TAG, "onGlobalLayout: bottomPanel content " + bottomPanel.getChildAt(0).getMeasuredHeight() );
+                Log.e(TAG, "onGlobalLayout tv2: " + tv2.getMeasuredHeight() );
+            }
+        });
+    }
+
+    private void prepareData() {
         final ArrayList<String> datas = new ArrayList<>();
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 20; i++) {
             datas.add("name " + i);
         }
         LinearLayoutManager layout = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layout);
-        recyclerView.setHasFixedSize(true);
+        recyclerView2.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(new CommonAdapter<String>(R.layout.item, datas) {
+            @Override
+            protected void convert(ViewHolder holder, String s, int position) {
+                holder.setText(R.id.text, datas.get(position));
+            }
+
+        });
+        recyclerView2.setAdapter(new CommonAdapter<String>(R.layout.item, datas) {
             @Override
             protected void convert(ViewHolder holder, String s, int position) {
                 holder.setText(R.id.text, datas.get(position));
@@ -134,4 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     boolean isMax;
+
+
+
 }

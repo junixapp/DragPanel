@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 
 /**
@@ -33,9 +34,11 @@ public class FillLinearLayout extends LinearLayout {
                 View v = getChildAt(i);
                 if(v.getVisibility()==GONE)continue;
                 measureChild(v, widthMeasureSpec, heightMeasureSpec);
-                total += v.getMeasuredHeight();
+                ViewGroup.MarginLayoutParams params = (MarginLayoutParams) v.getLayoutParams();
+                total += v.getMeasuredHeight() + params.bottomMargin + params.topMargin;
             }
             int width = MeasureSpec.getSize(widthMeasureSpec);
+            total += getPaddingBottom() + getPaddingTop();
             setMeasuredDimension(width, total);
         }
 

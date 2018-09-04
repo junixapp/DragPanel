@@ -17,6 +17,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewTreeObserver;
 import android.widget.FrameLayout;
 
+import java.util.ArrayList;
+
 /**
  * Created by lixiaojun on 2018/8/17.
  */
@@ -177,7 +179,6 @@ public class DragPanel extends FrameLayout {
 
         @Override
         public int getViewVerticalDragRange(View child) {
-            canScrollVertically(-1);
             return 1;
         }
 
@@ -207,14 +208,7 @@ public class DragPanel extends FrameLayout {
             changeImageAlpha();
 
             // notify listener
-            if (dragListener != null) {
-                dragListener.onDragging(fraction);
-                if (dragView.getTop() == defaultTop) {
-                    dragListener.onOpen();
-                } else if (dragView.getTop() == maxTop) {
-                    dragListener.onClose();
-                }
-            }
+            notifyDragListener(fraction);
 
             if (changedView == dragView) {
                 if (dy > 0 && top <= defaultTop) {
@@ -241,6 +235,19 @@ public class DragPanel extends FrameLayout {
             ViewCompat.postInvalidateOnAnimation(DragPanel.this);
         }
     };
+
+    private void notifyDragListener(float fraction) {
+        if (listeners != null) {
+            for (OnPanelDragListener listener : listeners){
+                listener.onDragging(fraction);
+                if (dragView.getTop() == defaultTop) {
+                    listener.onOpen();
+                } else if (dragView.getTop() == maxTop) {
+                    listener.onClose();
+                }
+            }
+        }
+    }
 
     private void changeShadow(float fraction) {
         if (!hasShadow) return;
@@ -305,6 +312,7 @@ public class DragPanel extends FrameLayout {
 
     /**
      * set DragPanel has shadow bg.
+     * @param hasShadow is show shadow below the content.
      */
     public void setHasShadow(boolean hasShadow) {
         this.hasShadow = hasShadow;
@@ -324,10 +332,26 @@ public class DragPanel extends FrameLayout {
         void onDragging(float fraction);
     }
 
-    private OnPanelDragListener dragListener;
+    private ArrayList<OnPanelDragListener> listeners;
 
-    public void setOnPanelDragListener(OnPanelDragListener listener) {
-        this.dragListener = listener;
+    public void addOnPanelDragListener(OnPanelDragListener listener) {
+        if(listeners==null){
+            listeners = new ArrayList<>();
+        }
+        listeners.add(listener);
+    }
+
+    public void removePanelDragListener(OnPanelDragListener listener){
+        if(listeners!=null){
+            listeners.remove(listener);
+        }
+    }
+
+    public void removeAllListener(){
+        if(listeners!=null){
+            listeners.clear();
+        }
+        this.headerClickListener = null;
     }
 
     public interface OnHeaderClickListener {
@@ -336,7 +360,7 @@ public class DragPanel extends FrameLayout {
 
     private OnHeaderClickListener headerClickListener;
 
-    public void setOnTapListener(OnHeaderClickListener headerClickListener) {
+    public void setOnHeaderClickListener(OnHeaderClickListener headerClickListener) {
         this.headerClickListener = headerClickListener;
     }
 
@@ -350,4 +374,5 @@ public class DragPanel extends FrameLayout {
     public void setIsChangeAlpha(boolean isChangeAlpha){
         this.isChangeAlpha = isChangeAlpha;
     }
+
 }

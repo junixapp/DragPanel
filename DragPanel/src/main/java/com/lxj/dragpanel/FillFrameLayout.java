@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 /**
@@ -32,7 +33,10 @@ public class FillFrameLayout extends FrameLayout {
             View v = getChildAt(i);
             if(v.getVisibility()==GONE)continue;
             measureChild(v, widthMeasureSpec, heightMeasureSpec);
-            maxheight = Math.max(maxheight, v.getMeasuredHeight());
+
+            ViewGroup.MarginLayoutParams params = (MarginLayoutParams) v.getLayoutParams();
+            int totalHeight = v.getMeasuredHeight() + params.topMargin + params.bottomMargin;
+            maxheight = Math.max(maxheight, totalHeight);
         }
         setMeasuredDimension(MeasureSpec.getSize(widthMeasureSpec), maxheight);
     }

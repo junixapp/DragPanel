@@ -113,11 +113,16 @@
                 <TextView
                     android:id="@+id/tv2"
                     android:layout_width="match_parent"
-                    android:layout_height="320dp"
+                    android:layout_height="1100dp"
                     android:background="#fff"
                     android:gravity="center"
                     android:text="textView"
                     android:textSize="20sp" />
+
+                <com.lxj.dragpanel.FillRecyclerView
+                    android:id="@+id/recyclerView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
             </com.lxj.dragpanel.FillLinearLayout>
 
             <TextView
