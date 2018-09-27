@@ -114,6 +114,7 @@ public class DragPanel extends FrameLayout {
             fixedView.layout(0, getMeasuredHeight(), fixedView.getMeasuredWidth(), getMeasuredHeight() + fixedView.getMeasuredHeight());
             isFirstLayout = false;
         }
+        calculateValues();
         changeImageAlpha();
     }
 
@@ -244,9 +245,14 @@ public class DragPanel extends FrameLayout {
                     listener.onOpen();
                 } else if (dragView.getTop() == maxTop) {
                     listener.onClose();
+                    reset();
                 }
             }
         }
+    }
+
+    private void reset() {
+        headerView.setAlpha(0);
     }
 
     private void changeShadow(float fraction) {
@@ -257,15 +263,16 @@ public class DragPanel extends FrameLayout {
     private void changeImageAlpha() {
         if(!isChangeAlpha)return;
         //calculate drag fraction from defaultTop to minTop;
-        float fraction = dragView.getTop() * 1f / defaultTop;
+        if(dragView.getTop() > defaultTop) return;
+        float distance = Math.min(defaultTop, defaultTop-minTop);
+        float fraction = Math.abs(dragView.getTop()-defaultTop) * 1f / distance;
         if (fraction < 0f) {
             fraction = 0f;
         }
         if (fraction > 1f) {
             fraction = 1f;
         }
-
-        Float val = floatEvaluator.evaluate(1f - fraction, 0f, 1f);
+        Float val = floatEvaluator.evaluate(fraction, 0f, 1f);
         headerView.setAlpha(val);
     }
 
