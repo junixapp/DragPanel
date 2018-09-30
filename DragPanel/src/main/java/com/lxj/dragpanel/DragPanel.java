@@ -374,6 +374,9 @@ public class DragPanel extends FrameLayout {
     public boolean isOpen() {
         return dragView.getTop() <= defaultTop;
     }
+    public boolean isOpenToTop() {
+        return dragView.getTop() == Math.max(minTop, 0);
+    }
 
     public boolean isClose() {
         return dragView.getTop() == maxTop;
