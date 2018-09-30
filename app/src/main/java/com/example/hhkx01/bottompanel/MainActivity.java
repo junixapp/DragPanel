@@ -42,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View view) {
 
 //                bottomPanel.setDefaultShowHeight(1400);
+                Toast.makeText(MainActivity.this, "isOpenToTop: " + bottomPanel.isOpenToTop(), 1).show();
                 bottomPanel.open();
             }
 
