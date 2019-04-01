@@ -2,7 +2,7 @@
 A nice vertical drag layout, a bit like BottomSheet!
 
 # Screenshot
-![DragPanel](/screenshot/dragpanel.gif)
+![DragPanel](/screenshot/1.gif)
 
 # Gradle
 

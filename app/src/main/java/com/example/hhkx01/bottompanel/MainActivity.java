@@ -109,18 +109,18 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-        final TextView text = findViewById(R.id.text);
-        text.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isMax){
-                    text.setMaxLines(3);
-                }else {
-                    text.setMaxLines(Integer.MAX_VALUE);
-                }
-                isMax = !isMax;
-            }
-        });
+//        final TextView text = findViewById(R.id.text);
+//        text.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(isMax){
+//                    text.setMaxLines(3);
+//                }else {
+//                    text.setMaxLines(Integer.MAX_VALUE);
+//                }
+//                isMax = !isMax;
+//            }
+//        });
 
 
         // prepare data
